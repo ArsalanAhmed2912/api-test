@@ -6,7 +6,7 @@ function App() {
 
   useEffect(() => {
     // Fetch message from backend
-    fetch('http://localhost:5000/message')
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/message`)
       .then(response => response.json())
       .then(data => setMessage(data.message))
       .catch(error => console.error('Error:', error));
