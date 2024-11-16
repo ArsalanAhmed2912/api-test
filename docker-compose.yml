@@ -1,22 +1,22 @@
 version: "3"
 services:
   api-backend:
-    image: api-backend
+    build: ./backend
     ports:
-      - "8080:5000"
+      - "9080:5000"
     networks:
-      - api=app
+      - api-app
 
   react-frontend:
-    image: react-frontend
+    build: ./frontend
     stdin_open: true
     ports:
-      - "8000:3000"
+      - "1000:3000"
     networks:
-      - api=app
+      - api-app
     depends_on:
-      -api-backend
+      - api-backend
 
 networks:
   api-app:
-    drive: bridge
+    driver: bridge
