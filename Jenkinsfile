@@ -21,9 +21,9 @@ pipeline {
             }
         }
         stage('Push to Docker Hub') {
-    steps {
-        script {
-            withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            steps {
+                script {
+            withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                 sh """
                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                 docker tag frontend-app:latest $FRONTEND_IMAGE:latest
@@ -31,10 +31,11 @@ pipeline {
                 docker push $FRONTEND_IMAGE:latest
                 docker push $BACKEND_IMAGE:latest
                 """
+                    }
+                }
             }
         }
-    }
-}
+
         stage('Run Containers') {
             steps {
                 script {
