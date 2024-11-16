@@ -1,33 +1,29 @@
 pipeline {
     agent any
-    
+
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials-id') // Your Docker Hub credentials ID
-        FRONTEND_IMAGE = 'ArsalanAhmed2912/frontend-app'
-        BACKEND_IMAGE = 'ArsalanAhmed2912/backend-app'
+        DOCKER_USER = 'arsalanahmed2912'
+        DOCKER_PASS = 'python@123'
+        FRONTEND_IMAGE = 'arsalanahmed2912/react-frontend'
+        BACKEND_IMAGE = 'arsalanahmed2912/api-backend'
     }
-    
+
     stages {
-        stage('Clone Repository') {
+        stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/ArsalanAhmed2912/api-test.git'
+                git 'https://github.com/ArsalanAhmed2912/api-test.git'
             }
         }
-        stage('Build Docker Images') {
-            steps {
-                script {
-                    sh 'docker-compose build'
-                }
-            }
-        }
-        stage('Push to Docker Hub') {
+
+        stage('Build and Push Docker Images') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker tag frontend-app:latest $FRONTEND_IMAGE:latest
-                        docker tag backend-app:latest $BACKEND_IMAGE:latest
+                        docker login -u $DOCKER_USER --password-stdin <<< "$DOCKER_PASS"
+                        docker-compose build
+                        docker tag react-frontend:latest $FRONTEND_IMAGE:latest
+                        docker tag api-backend:latest $BACKEND_IMAGE:latest
                         docker push $FRONTEND_IMAGE:latest
                         docker push $BACKEND_IMAGE:latest
                         '''
@@ -38,9 +34,7 @@ pipeline {
 
         stage('Run Containers') {
             steps {
-                script {
-                    sh 'docker-compose up -d'
-                }
+                sh 'docker-compose up -d'
             }
         }
     }
