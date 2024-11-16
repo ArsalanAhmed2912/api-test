@@ -3,7 +3,7 @@ services:
   api-backend:
     build: ./backend
     ports:
-      - "9080:5000"
+      - "9000:5000"
     networks:
       - api-app
 
