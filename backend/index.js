@@ -7,7 +7,7 @@ const PORT = 5000;
 app.use(cors()); // Use cors middleware
 
 app.get('/message', (req, res) => {
-  res.json({ message: 'Assalam O Alaikum from the backend!!' });
+  res.json({ message: 'Assalam O Alaikum from the backend!' });
 });
 
 app.listen(PORT, () => {
