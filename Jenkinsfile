@@ -21,18 +21,20 @@ pipeline {
             }
         }
         stage('Push to Docker Hub') {
-            steps {
-                script {
-                    sh """
-                    echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
-                    docker tag frontend-app:latest $FRONTEND_IMAGE:latest
-                    docker tag backend-app:latest $BACKEND_IMAGE:latest
-                    docker push $FRONTEND_IMAGE:latest
-                    docker push $BACKEND_IMAGE:latest
-                    """
-                }
+    steps {
+        script {
+            withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh """
+                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                docker tag frontend-app:latest $FRONTEND_IMAGE:latest
+                docker tag backend-app:latest $BACKEND_IMAGE:latest
+                docker push $FRONTEND_IMAGE:latest
+                docker push $BACKEND_IMAGE:latest
+                """
             }
         }
+    }
+}
         stage('Run Containers') {
             steps {
                 script {
